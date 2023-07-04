@@ -77,4 +77,4 @@ for collection_category in collection_categories:
 
     collection_category_id = insert_to_mongo(collection_category, False, category_children)
     root_children.append(collection_category_id)
-    print(root_children)
+insert_to_mongo("root", False, root_children)
