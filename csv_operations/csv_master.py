@@ -5,10 +5,10 @@ ERROR_MSG = "ERROR"
 COMMAND_NOT_FOUND_MSG = "Command not found. Please enter 'help' for list of commands"
 
 commands = {
-    "strip: removes whitespace from csv rows",
     "help",
+    "strip: removes whitespace from csv rows",
     "join rows: joins all cells in row and strips whitespace. Optionally alphabetizes",
-    "change encoding: changes csv encoding to specified type",
+    "change encoding: changes csv encoding to specified type"
 }
 
 
@@ -58,8 +58,8 @@ def strip_whitespace(input_filename, output_filename):
 def join_cells_into_list(input_filename, output_filename, alphabetize):
     new_rows_list = []
     with open(input_filename, 'r', encoding='unicode_escape') as csvfile:
-        csv_reader = csv.reader(csvfile, delimiter=',')
-        for row in csv_reader:
+        datareader = csv.reader(csvfile, delimiter=',')
+        for row in datareader:
             new_row = ', '.join(row)
             new_row = new_row.strip()
             tokenized_row = new_row.split(", ")
