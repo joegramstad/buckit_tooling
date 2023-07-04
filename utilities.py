@@ -8,7 +8,7 @@ PARENTHESES_AND_SQ_BRACKETS = "[\(\[].*?[\)\]]"
 
 def write_csv(csv_name, master_list, encoding='utf-8', newline=''):
     csv_name = csv_name + '.csv'
-    with open(csv_name, 'w', encoding=encoding, newline=newline) as file:
+    with open(csv_name, 'a', encoding=encoding, newline=newline) as file:
         writer = csv.writer(file)
         writer.writerows(master_list)
 

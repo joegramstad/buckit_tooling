@@ -1,0 +1,3 @@
+aws dynamodb get-item --table-name movies --key '{"imdb_id": {"S": "tt0044888"}}'
+
+aws dynamodb get-item --table-name TABLE_NAME --key '{"KEY_NAME": {"S": "IMDB_ID"}}'
