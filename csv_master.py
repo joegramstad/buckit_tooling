@@ -80,7 +80,6 @@ def change_encoding(input_filename, output_filename, current_encoding, desired_e
             plot = row[1]
 
             new_row = [id, plot]
-            print(new_row)
             new_rows_list.append(new_row)
 
         write_csv(new_rows_list, output_filename, desired_encoding)
