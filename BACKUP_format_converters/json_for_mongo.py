@@ -1,7 +1,6 @@
 import csv
 import json
 import sys
-import time
 
 
 def get_category_dict(row):
