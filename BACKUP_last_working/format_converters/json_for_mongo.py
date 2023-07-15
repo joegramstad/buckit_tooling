@@ -21,7 +21,7 @@ def get_types_dict(row):
     }
 
 
-def get_entry_dict(row, status):
+def get_entry_dict(row, status, sub_category=None):
     if status == '1':
         winner = True
     else:
@@ -32,8 +32,12 @@ def get_entry_dict(row, status):
         'objectID': row[7].strip(),
         'winner': winner,
         'primaryContext': row[9].strip(),
-        'secondaryContext': row[10].strip()
+        'secondaryContext': row[10].strip(),
     }
+
+    if sub_category:
+        entry_dict['subCategory'] = sub_category
+
     return entry_dict
 
 
@@ -45,7 +49,7 @@ def get_collection_dict(category_dict, year, entries, is_divided, types_dict):
         'collectionListOwner': category_dict['collectionListOwner'],
         'name': category_dict['name'],
         'year': year,
-        'subCategories': is_divided,
+        'isDivided': is_divided,
         'entries': entries,
         'types': types_dict
     }
@@ -58,25 +62,19 @@ def new_collection(row):
     sub_category = row[5].strip()
     status = row[8].strip()
 
-    entry_dict = get_entry_dict(row, status)
+    if sub_category == "n/a":
+        is_divided = False
+        entry_dict = get_entry_dict(row, status)
+    else:
+        is_divided = True
+        entry_dict = get_entry_dict(row, status, sub_category)
+
+    entries = []
+    entries.append(entry_dict)
+
     types_dict = get_types_dict(row)
 
-    is_divided = False
-    entries = {}
-    if sub_category != "n/a":
-        is_divided = True
-        entries[sub_category] = []
-
     collection_entry = get_collection_dict(category_dict, year, entries, is_divided, types_dict)
-
-    if is_divided:
-        entries_array = collection_entry['entries'][sub_category]
-    else:
-        entries_dict = collection_entry['entries']
-        entries_dict['ALL'] = []
-        entries_array = entries_dict['ALL']
-
-    entries_array.append(entry_dict)
 
     return collection_entry
 
@@ -85,19 +83,15 @@ def add_to_collection(row, cur_collection):
     sub_category = row[5].strip()
     status = row[8].strip()
 
-    entries_dict = cur_collection['entries']
+    entries = cur_collection['entries']
 
-    if cur_collection['subCategories']:
-        if sub_category not in entries_dict:
-            entries_dict[sub_category] = []
-
-        entries_array = entries_dict[sub_category]
+    if cur_collection['isDivided']:
+        entry_dict = get_entry_dict(row, status, sub_category)
 
     else:
-        entries_array = entries_dict['ALL']
+        entry_dict = get_entry_dict(row, status)
 
-    entry_dict = get_entry_dict(row, status)
-    entries_array.append(entry_dict)
+    entries.append(entry_dict)
 
 
 def json_write(all_entries, output_file):
