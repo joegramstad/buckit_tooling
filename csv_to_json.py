@@ -7,8 +7,8 @@ COMMAND_NOT_FOUND_MSG = "Command not found. Please enter 'help' for list of comm
 
 commands = {
     "help",
-    "json dynamo: removes whitespace from csv rows",
-    "json mongo: joins all cells in row and strips whitespace. Optionally alphabetizes"
+    "dynamo",
+    "mongo"
 }
 
 
@@ -297,16 +297,16 @@ def to_json_mongo(input_file, output_file):
 
 def main(argv):
     input_file = argv[1] + '.csv'
-    output_file = argv[2] + '.json'
+    output_file = argv[1] + '.json'
 
     while True:
         command = input("What would you like to do?: ")
         if command in commands:
             if command == "help":
                 help_commands()
-            elif command == "json dynamo":
+            elif command == "dynamo":
                 to_json_dynamo(input_file, output_file)
-            elif command == "json mongo":
+            elif command == "mongo":
                 to_json_mongo(input_file, output_file)
 
         else:

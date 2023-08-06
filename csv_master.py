@@ -6,9 +6,9 @@ COMMAND_NOT_FOUND_MSG = "Command not found. Please enter 'help' for list of comm
 
 commands = {
     "help",
-    "strip: removes whitespace from csv rows",
-    "join rows: joins all cells in row and strips whitespace. Optionally alphabetizes",
-    "change encoding: changes csv encoding to specified type"
+    "strip",
+    "join rows",
+    "change encoding"
 }
 
 
@@ -44,7 +44,7 @@ def strip_whitespace(input_filename, output_filename):
         datareader = csv.reader(csvfile)
         for row in datareader:
             try:
-                original = row[0]
+                original = row[6]
                 original = original.strip()
             except:
                 original = ERROR_MSG
