@@ -1,7 +1,7 @@
 import csv
 import sys
 import requests
-import csv_master
+# import csv_master
 
 NOT_FOUND_ERROR = "not found error"
 ENCODING_ERROR = "encoding error"
@@ -16,8 +16,8 @@ PLOT_PARAM = '&plot='
 
 commands = {
     "help",
-    "get imdb id: looks up imdb id given criteria (i.e. year, title)",
-    "get movie info: looks up movie info given imdb id"
+    "get imdb id",
+    "get movie info"
 }
 
 
@@ -27,38 +27,67 @@ def help_commands():
 
 def get_imdb_id(input_filename, output_filename):
     new_rows_list = []
+    new_rows_list.append(["year", "title", "title_only_imdb_id", "title_only_title", "title_only_year", "both_imdb_id",
+                          "both_title", "both_year", "minus1_only_imdb_id", "minus1_only_title", "minus1_only_year",
+                          "plus1_imdb_id", "plus1_title", "plus1_only_year"])
 
     with open(input_filename, 'r', encoding='utf-8') as csvfile:
         datareader = csv.reader(csvfile)
         for row in datareader:
             year = row[0].strip()
             title = row[1].strip()
+
+            new_row = [year, title]
+
             adj_title = title.replace(" ", "+")
 
-            full_req = URL + API_KEY + TITLE_PARAM + adj_title + YEAR_PARAM + year
-            r = requests.get(url=full_req)
-            r.encoding = 'utf-8'
+            url_req = URL + API_KEY + TITLE_PARAM + adj_title
 
-            try:
-                data = r.json()
-                if data['Response'] == "True":
-                    imdb_id = data['imdbID']
-                    title = data['Title']
-                    year = data['Year']
-                else:
-                    imdb_id = NOT_FOUND_ERROR
-                    title = NOT_FOUND_ERROR
-                    year = NOT_FOUND_ERROR
+            for i in range(3):
 
-            except ValueError:
-                imdb_id = ENCODING_ERROR
-                title = ENCODING_ERROR
-                year = ENCODING_ERROR
+                r = requests.get(url=url_req)
+                r.encoding = 'utf-8'
 
-            new_row = [imdb_id, title, year]
+                try:
+                    data = r.json()
+                    if data['Response'] == "True":
+                        resp_imdb_id = data['imdbID']
+                        resp_title = data['Title']
+                        resp_year = data['Year']
+                        print(title)
+                    else:
+                        resp_imdb_id = NOT_FOUND_ERROR
+                        resp_title = NOT_FOUND_ERROR
+                        resp_year = NOT_FOUND_ERROR
+
+                except ValueError:
+                    resp_imdb_id = ENCODING_ERROR
+                    resp_title = ENCODING_ERROR
+                    resp_year = ENCODING_ERROR
+
+                except UnicodeDecodeError:
+                    resp_imdb_id = ENCODING_ERROR
+                    resp_title = ENCODING_ERROR
+                    resp_year = ENCODING_ERROR
+
+                new_row.append(resp_imdb_id)
+                new_row.append(resp_title)
+                new_row.append(resp_year)
+
+                try:
+                    if i < 2:
+                        year = int(year) + (i * -1)
+                    else:
+                        year = int(year) + i
+
+                except ValueError:
+                    year = 2002
+
+                url_req = URL + API_KEY + TITLE_PARAM + adj_title + YEAR_PARAM + str(year)
+
             new_rows_list.append(new_row)
 
-    csv_master.write_csv(new_rows_list, output_filename)
+    write_csv(new_rows_list, output_filename)
 
 
 def get_movie_info(input_filename, output_filename, plot_size='full'):
@@ -103,7 +132,8 @@ def get_movie_info(input_filename, output_filename, plot_size='full'):
             new_row = [imdb_id, title, released, runtime, country, language, plot, poster]
             new_rows_list.append(new_row)
 
-    csv_master.write_csv(new_rows_list, output_filename)
+
+    write_csv(new_rows_list, output_filename)
 
 
 def main(argv):
@@ -126,5 +156,10 @@ def main(argv):
             print(COMMAND_NOT_FOUND_MSG)
             continue
 
+def write_csv(rows_list, output_filename, desired_encoding='utf8'):
+    output_file = open(output_filename, 'w', newline='', encoding=desired_encoding)
+    writer = csv.writer(output_file)
+    writer.writerows(rows_list)
+    output_file.close()
 
 main(sys.argv)

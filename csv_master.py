@@ -11,6 +11,15 @@ commands = {
     "change encoding"
 }
 
+conversion = {
+    'Ã”': 'Ô',
+    'Ã©': 'é',
+    'Ã¡': 'á',
+    'Ã³': 'ó',
+    'Ã€': 'À',
+    'Ã¨': 'è'
+}
+
 
 def help_commands():
     print(commands)
@@ -44,7 +53,7 @@ def strip_whitespace(input_filename, output_filename):
         datareader = csv.reader(csvfile)
         for row in datareader:
             try:
-                original = row[6]
+                original = row[0]
                 original = original.strip()
             except:
                 original = ERROR_MSG
@@ -109,7 +118,7 @@ def main(argv):
                 desired_encoding = input("What is the desired output file encoding format? (type 'def' or 'default' for utf-8): ").lower()
                 if desired_encoding == 'def' or desired_encoding == 'default':
                     print("Changing encoding from", current_encoding, "to utf-8")
-                    change_encoding(input_file, output_file, current_encoding)
+                    change_encoding(input_file, output_file, current_encoding, desired_encoding)
                 else:
                     print("Changing encoding from", current_encoding, "to", desired_encoding)
                     change_encoding(input_file, output_file, current_encoding, desired_encoding)
